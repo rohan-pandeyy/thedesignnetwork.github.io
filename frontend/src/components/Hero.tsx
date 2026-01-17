@@ -1,11 +1,13 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useRef, useEffect, useState } from 'react';
 import { logger } from '@/lib/logger';
+import Loader from './Loader';
 
 export function Hero() {
     const videoRef = useRef<HTMLVideoElement>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Ensure video is muted immediately on load to prevent any audio
     useEffect(() => {
@@ -30,14 +32,18 @@ export function Hero() {
 
         const handleCanPlay = () => {
             logger.info('Video: canplay');
+            setIsLoading(false);
         };
 
         const handlePlaying = () => {
             logger.info('Video: playing');
+            setIsLoading(false);
         };
 
         const handleError = (e: Event) => {
             logger.error('Video error:', e);
+            // In case of error, we should probably hide the loader so the site isn't stuck
+            setIsLoading(false);
         };
 
         const handlePlay = () => {
@@ -60,7 +66,7 @@ export function Hero() {
             playPromise
                 .then(() => logger.info('Video autoplay successful'))
                 .catch((error) =>
-                    logger.error('Video autoplay failed:', error)
+                    logger.error('Video autoplay failed:', error),
                 );
         }
 
@@ -77,10 +83,25 @@ export function Hero() {
 
     return (
         <div className='relative h-screen w-full overflow-hidden bg-black'>
+            <AnimatePresence>
+                {isLoading && (
+                    <motion.div
+                        initial={{ opacity: 1 }}
+                        exit={{ opacity: 0, filter: 'blur(10px)' }}
+                        transition={{ duration: 0.8, ease: 'easeInOut' }}
+                        className='fixed inset-0 z-[100] flex items-center justify-center bg-background'
+                    >
+                        <Loader />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* MASSIVE VIDEO - Takes up 95% of space */}
             <video
                 ref={videoRef}
-                className='absolute inset-0 w-full h-full object-cover scale-110'
+                className={`absolute inset-0 w-full h-full object-cover scale-110 transition-opacity duration-1000 ${
+                    isLoading ? 'opacity-0' : 'opacity-100'
+                }`}
                 autoPlay
                 muted
                 loop
