@@ -5,6 +5,8 @@ import { Hero } from '@/components/Hero';
 import { Portfolio } from '@/components/Portfolio';
 import NotFound from '@/pages/NotFound';
 
+import { ToolsTicker } from '@/components/CompaniesTicker';
+
 function App() {
     return (
         <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
@@ -16,6 +18,7 @@ function App() {
                             <>
                                 <Hero />
                                 <Portfolio />
+                                <ToolsTicker />
                             </>
                         }
                     />
