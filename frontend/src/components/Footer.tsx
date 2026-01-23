@@ -21,7 +21,7 @@ export function Footer() {
 
     return (
         <footer
-            className={`relative bg-foreground text-background ${isMobile ? 'py-12' : 'py-20'}`}
+            className={`relative bg-background text-foreground border-t border-border ${isMobile ? 'py-12' : 'py-20'}`}
         >
             <div className='container mx-auto px-6 sm:px-8 lg:px-12'>
                 <div
@@ -31,11 +31,11 @@ export function Footer() {
                     <div className='col-span-12 md:col-span-4'>
                         <div>
                             <div
-                                className={`font-bagel text-background tracking-wider mb-4 ${isMobile ? 'text-2xl' : 'text-3xl'}`}
+                                className={`font-bagel text-foreground tracking-wider mb-4 ${isMobile ? 'text-2xl' : 'text-3xl'}`}
                             >
                                 The Design Network
                             </div>
-                            <p className='text-background/70 leading-relaxed mb-6'>
+                            <p className='text-foreground/70 leading-relaxed mb-6'>
                                 Revolutionizing interior designing with a
                                 passion for creativity, storytelling, and human
                                 emotion.
@@ -104,12 +104,12 @@ export function Footer() {
                     {/* Content Section */}
                     <div className='col-span-12 md:col-span-8'>
                         <div>
-                            <h4 className='font-black text-2xl text-background mb-4'>
+                            <h4 className='font-black text-2xl text-foreground mb-4'>
                                 OUR EXPERTISE
                             </h4>
 
                             {/* Services Description */}
-                            <p className='text-background/70 text-base mb-8 leading-relaxed'>
+                            <p className='text-foreground/70 text-base mb-8 leading-relaxed'>
                                 Crafting timeless environments that blend
                                 aesthetics with functionality. We specialize in
                                 transforming visions into reality through
@@ -123,7 +123,7 @@ export function Footer() {
                                 {services.map((service) => (
                                     <div
                                         key={service}
-                                        className='text-background/80 gentle-animation text-sm font-medium'
+                                        className='text-background/80 dark:text-foreground/80 gentle-animation text-sm font-medium'
                                     >
                                         {service}
                                     </div>
@@ -135,17 +135,17 @@ export function Footer() {
 
                 {/* Bottom Bar */}
                 <div
-                    className={`border-t border-background/20 mt-16 ${isMobile ? 'pt-6 text-center' : 'pt-8'}`}
+                    className={`border-t border-background/20 dark:border-foreground/20 mt-16 ${isMobile ? 'pt-6 text-center' : 'pt-8'}`}
                 >
                     <div
                         className={`flex ${isMobile ? 'flex-col gap-4' : 'flex-col md:flex-row justify-between items-center'}`}
                     >
-                        <div className='text-sm text-background/70'>
+                        <div className='text-sm text-background/70 dark:text-foreground/70'>
                             © {new Date().getFullYear()} The Design Network. All
                             rights reserved.
                         </div>
                         <div
-                            className={`text-sm text-background/70 ${isMobile ? 'text-xs px-4' : ''}`}
+                            className={`text-sm text-background/70 dark:text-foreground/70 ${isMobile ? 'text-xs px-4' : ''}`}
                         >
                             38/2/34, Site 4, Sahibabad Industrial Area Site 4,
                             Sahibabad, Ghaziabad, Uttar Pradesh 201010, India
