@@ -8,6 +8,7 @@ import NotFound from '@/pages/NotFound';
 import Loader from '@/components/ui/Loader';
 
 const About = lazy(() => import('@/pages/About'));
+const Contact = lazy(() => import('@/pages/Contact'));
 
 import { ToolsTicker } from '@/components/CompaniesTicker';
 
@@ -37,6 +38,20 @@ function App() {
                                 }
                             >
                                 <About />
+                            </Suspense>
+                        }
+                    />
+                    <Route
+                        path='/contact'
+                        element={
+                            <Suspense
+                                fallback={
+                                    <div className='fixed inset-0 z-50 flex items-center justify-center bg-background'>
+                                        <Loader />
+                                    </div>
+                                }
+                            >
+                                <Contact />
                             </Suspense>
                         }
                     />
