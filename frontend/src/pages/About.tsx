@@ -1,5 +1,6 @@
 import { Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 const About = () => {
     return (
@@ -118,10 +119,12 @@ const About = () => {
                         Contact us today to start your journey towards a
                         beautiful living space.
                     </p>
-                    <Button className='bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8'>
-                        <Mail className='mr-2 h-4 w-4' />
-                        Get in Touch
-                    </Button>
+                    <Link to='/contact'>
+                        <Button className='bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8'>
+                            <Mail className='mr-2 h-4 w-4' />
+                            Get in Touch
+                        </Button>
+                    </Link>
                 </section>
             </main>
         </div>

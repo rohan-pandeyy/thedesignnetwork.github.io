@@ -30,12 +30,25 @@ const items = [
     },
     {
         label: 'Contact',
+        href: '/contact',
         bgColor: '#271E37',
         textColor: '#fff',
         links: [
-            { label: 'Email', href: '#', ariaLabel: 'Email us' },
-            { label: 'Twitter', href: '#', ariaLabel: 'Twitter' },
-            { label: 'LinkedIn', href: '#', ariaLabel: 'LinkedIn' },
+            {
+                label: 'Email',
+                href: 'mailto:designnetwork2002@gmail.com',
+                ariaLabel: 'Email us',
+            },
+            {
+                label: 'Instagram',
+                href: 'https://instagram.com/__thedesignnetwork__',
+                ariaLabel: 'Instagram',
+            },
+            {
+                label: 'LinkedIn',
+                href: 'https://www.linkedin.com/in/the-design-network-2a64a027a/',
+                ariaLabel: 'LinkedIn',
+            },
         ],
     },
 ];
