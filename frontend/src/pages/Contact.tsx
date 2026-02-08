@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import emailjs from '@emailjs/browser';
 
 const Contact = () => {
     const { toast } = useToast();
+    const form = useRef<HTMLFormElement>(null);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -11,21 +13,48 @@ const Contact = () => {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const sendEmail = (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
 
-        // Simulate form submission
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        toast({
-            title: 'Message sent!',
-            description: "We'll get back to you as soon as possible.",
-        });
-
-        // Reset form
-        setFormData({ firstName: '', lastName: '', email: '', message: '' });
-        setIsSubmitting(false);
+        if (form.current) {
+            emailjs
+                .sendForm(
+                    'service_dd2fo0o',
+                    'template_tqwqnqa',
+                    form.current,
+                    '5fyW5KsDVYYrhjnz2',
+                )
+                .then(
+                    (result) => {
+                        console.log(result.text);
+                        toast({
+                            title: 'Message sent!',
+                            description:
+                                "We'll get back to you as soon as possible.",
+                        });
+                        setFormData({
+                            firstName: '',
+                            lastName: '',
+                            email: '',
+                            message: '',
+                        });
+                        form.current?.reset();
+                    },
+                    (error) => {
+                        console.log(error.text);
+                        toast({
+                            title: 'Error',
+                            description:
+                                'Something went wrong. Please try again.',
+                            variant: 'destructive',
+                        });
+                    },
+                )
+                .finally(() => {
+                    setIsSubmitting(false);
+                });
+        }
     };
 
     const handleChange = (
@@ -90,7 +119,7 @@ const Contact = () => {
                                         Phone
                                     </p>
                                     <a
-                                        href='tel:+91 85950 39778'
+                                        href='tel:+918595039778'
                                         className='text-lg hover:opacity-60 transition-opacity'
                                     >
                                         +91 85950 39778
@@ -138,7 +167,7 @@ const Contact = () => {
                     </div>
 
                     {/* Contact Form */}
-                    <form onSubmit={handleSubmit} className='space-y-4'>
+                    <form ref={form} onSubmit={sendEmail} className='space-y-4'>
                         <div className='grid grid-cols-2 gap-4'>
                             <div className='space-y-2'>
                                 <label
