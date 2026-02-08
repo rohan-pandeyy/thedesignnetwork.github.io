@@ -11,6 +11,7 @@ const About = lazy(() => import('@/pages/About'));
 const Contact = lazy(() => import('@/pages/Contact'));
 
 import { ToolsTicker } from '@/components/CompaniesTicker';
+import { Toaster } from '@/components/ui/sonner';
 
 function App() {
     return (
@@ -57,6 +58,7 @@ function App() {
                     />
                     <Route path='*' element={<NotFound />} />
                 </Routes>
+                <Toaster />
             </Layout>
         </ThemeProvider>
     );

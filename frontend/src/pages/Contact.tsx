@@ -1,9 +1,9 @@
 import { useState, useRef } from 'react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import emailjs from '@emailjs/browser';
+import { cn } from '@/lib/utils';
 
 const Contact = () => {
-    const { toast } = useToast();
     const form = useRef<HTMLFormElement>(null);
     const [formData, setFormData] = useState({
         firstName: '',
@@ -11,10 +11,61 @@ const Contact = () => {
         email: '',
         message: '',
     });
+    const [errors, setErrors] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        message: '',
+    });
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const validateForm = () => {
+        const newErrors = {
+            firstName: '',
+            lastName: '',
+            email: '',
+            message: '',
+        };
+        let isValid = true;
+
+        if (!formData.firstName.trim()) {
+            newErrors.firstName = 'First name is required';
+            isValid = false;
+        }
+
+        if (!formData.lastName.trim()) {
+            newErrors.lastName = 'Last name is required';
+            isValid = false;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!formData.email.trim()) {
+            newErrors.email = 'Email is required';
+            isValid = false;
+        } else if (!emailRegex.test(formData.email)) {
+            newErrors.email = 'Please enter a valid email address';
+            isValid = false;
+        }
+
+        if (!formData.message.trim()) {
+            newErrors.message = 'Message is required';
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
 
     const sendEmail = (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!validateForm()) {
+            toast.error('Validation Error', {
+                description: 'Please check the highlighted fields.',
+            });
+            return;
+        }
+
         setIsSubmitting(true);
 
         if (form.current) {
@@ -28,8 +79,7 @@ const Contact = () => {
                 .then(
                     (result) => {
                         console.log(result.text);
-                        toast({
-                            title: 'Message sent!',
+                        toast.success('Message sent!', {
                             description:
                                 "We'll get back to you as soon as possible.",
                         });
@@ -39,15 +89,22 @@ const Contact = () => {
                             email: '',
                             message: '',
                         });
+                        setErrors({
+                            firstName: '',
+                            lastName: '',
+                            email: '',
+                            message: '',
+                        });
                         form.current?.reset();
                     },
                     (error) => {
-                        console.log(error.text);
-                        toast({
-                            title: 'Error',
-                            description:
-                                'Something went wrong. Please try again.',
-                            variant: 'destructive',
+                        console.error(error);
+                        const errorMessage =
+                            error?.text ||
+                            error?.message ||
+                            'Failed to send message. Please try again.';
+                        toast.error('Error sending message', {
+                            description: errorMessage,
                         });
                     },
                 )
@@ -60,10 +117,18 @@ const Contact = () => {
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
+        const { name, value } = e.target;
         setFormData((prev) => ({
             ...prev,
-            [e.target.name]: e.target.value,
+            [name]: value,
         }));
+        // Clear error when user types
+        if (errors[name as keyof typeof errors]) {
+            setErrors((prev) => ({
+                ...prev,
+                [name]: '',
+            }));
+        }
     };
 
     return (
@@ -167,7 +232,12 @@ const Contact = () => {
                     </div>
 
                     {/* Contact Form */}
-                    <form ref={form} onSubmit={sendEmail} className='space-y-4'>
+                    <form
+                        ref={form}
+                        onSubmit={sendEmail}
+                        className='space-y-4'
+                        noValidate
+                    >
                         <div className='grid grid-cols-2 gap-4'>
                             <div className='space-y-2'>
                                 <label
@@ -182,10 +252,19 @@ const Contact = () => {
                                     type='text'
                                     value={formData.firstName}
                                     onChange={handleChange}
-                                    required
-                                    className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+                                    className={cn(
+                                        'flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors',
+                                        errors.firstName
+                                            ? 'border-red-500 focus-visible:ring-red-500'
+                                            : 'border-input',
+                                    )}
                                     placeholder='Enter your first name'
                                 />
+                                {errors.firstName && (
+                                    <p className='text-xs text-red-500 mt-1'>
+                                        {errors.firstName}
+                                    </p>
+                                )}
                             </div>
                             <div className='space-y-2'>
                                 <label
@@ -200,9 +279,19 @@ const Contact = () => {
                                     type='text'
                                     value={formData.lastName}
                                     onChange={handleChange}
-                                    className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+                                    className={cn(
+                                        'flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors',
+                                        errors.lastName
+                                            ? 'border-red-500 focus-visible:ring-red-500'
+                                            : 'border-input',
+                                    )}
                                     placeholder='Enter your last name'
                                 />
+                                {errors.lastName && (
+                                    <p className='text-xs text-red-500 mt-1'>
+                                        {errors.lastName}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
@@ -219,10 +308,19 @@ const Contact = () => {
                                 type='email'
                                 value={formData.email}
                                 onChange={handleChange}
-                                required
-                                className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+                                className={cn(
+                                    'flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors',
+                                    errors.email
+                                        ? 'border-red-500 focus-visible:ring-red-500'
+                                        : 'border-input',
+                                )}
                                 placeholder='Enter your email address'
                             />
+                            {errors.email && (
+                                <p className='text-xs text-red-500 mt-1'>
+                                    {errors.email}
+                                </p>
+                            )}
                         </div>
 
                         <div className='space-y-2'>
@@ -237,11 +335,20 @@ const Contact = () => {
                                 name='message'
                                 value={formData.message}
                                 onChange={handleChange}
-                                required
                                 rows={5}
-                                className='flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+                                className={cn(
+                                    'flex min-h-[80px] w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors',
+                                    errors.message
+                                        ? 'border-red-500 focus-visible:ring-red-500'
+                                        : 'border-input',
+                                )}
                                 placeholder='Tell us about your project...'
                             />
+                            {errors.message && (
+                                <p className='text-xs text-red-500 mt-1'>
+                                    {errors.message}
+                                </p>
+                            )}
                         </div>
 
                         <button
