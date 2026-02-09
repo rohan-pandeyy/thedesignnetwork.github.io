@@ -119,12 +119,15 @@ const About = () => {
                         Contact us today to start your journey towards a
                         beautiful living space.
                     </p>
-                    <Link to='/contact'>
-                        <Button className='bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8'>
+                    <Button
+                        asChild
+                        className='bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8'
+                    >
+                        <Link to='/contact'>
                             <Mail className='mr-2 h-4 w-4' />
                             Get in Touch
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                 </section>
             </main>
         </div>

@@ -66,52 +66,62 @@ const Contact = () => {
             return;
         }
 
+        if (!form.current) {
+            toast.error('Internal Error', {
+                description:
+                    'Form reference is missing. Please reload the page.',
+            });
+            return;
+        }
+
         setIsSubmitting(true);
 
-        if (form.current) {
-            emailjs
-                .sendForm(
-                    'service_dd2fo0o',
-                    'template_tqwqnqa',
-                    form.current,
-                    '5fyW5KsDVYYrhjnz2',
-                )
-                .then(
-                    (result) => {
+        emailjs
+            .sendForm(
+                import.meta.env.VITE_EMAILJS_SERVICE_ID,
+                import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+                form.current,
+                import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+            )
+            .then(
+                (result) => {
+                    if (import.meta.env.DEV) {
                         console.log(result.text);
-                        toast.success('Message sent!', {
-                            description:
-                                "We'll get back to you as soon as possible.",
-                        });
-                        setFormData({
-                            firstName: '',
-                            lastName: '',
-                            email: '',
-                            message: '',
-                        });
-                        setErrors({
-                            firstName: '',
-                            lastName: '',
-                            email: '',
-                            message: '',
-                        });
-                        form.current?.reset();
-                    },
-                    (error) => {
+                    }
+                    toast.success('Message sent!', {
+                        description:
+                            "We'll get back to you as soon as possible.",
+                    });
+                    setFormData({
+                        firstName: '',
+                        lastName: '',
+                        email: '',
+                        message: '',
+                    });
+                    setErrors({
+                        firstName: '',
+                        lastName: '',
+                        email: '',
+                        message: '',
+                    });
+                    form.current?.reset();
+                },
+                (error) => {
+                    if (import.meta.env.DEV) {
                         console.error(error);
-                        const errorMessage =
-                            error?.text ||
-                            error?.message ||
-                            'Failed to send message. Please try again.';
-                        toast.error('Error sending message', {
-                            description: errorMessage,
-                        });
-                    },
-                )
-                .finally(() => {
-                    setIsSubmitting(false);
-                });
-        }
+                    }
+                    const errorMessage =
+                        error?.text ||
+                        error?.message ||
+                        'Failed to send message. Please try again.';
+                    toast.error('Error sending message', {
+                        description: errorMessage,
+                    });
+                },
+            )
+            .finally(() => {
+                setIsSubmitting(false);
+            });
     };
 
     const handleChange = (
